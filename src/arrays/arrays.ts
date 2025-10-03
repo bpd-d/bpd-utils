@@ -49,6 +49,11 @@ export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
         return array;
       });
     },
+    push(item: T): ArraysType<T> {
+      const array = !isNil(input) ? input : [];
+      array.push(item);
+      return Arrays(array);
+    },
     some(predicate: Predicate<T>): boolean {
       return !isNil(input) && input.some(predicate);
     },

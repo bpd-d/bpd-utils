@@ -26,6 +26,7 @@ export type ArraysType<T> = {
   resize(size: number, defaultValue?: T): ArraysType<T | undefined>;
   forEach(callback: ArrayForEach<T>): ArraysType<T>;
   sort(callback?: ArraySort<T>): ArraysType<T>;
+  push(item: T): ArraysType<T>;
   some(predicate: Predicate<T>): boolean;
   find(predicate: Predicate<T>): T | undefined;
   orElse(defaultValue: T[]): T[];
