@@ -1,4 +1,4 @@
-import { isNil, shallowArrayCopy, type Nil } from "../util/utils";
+import { isArray, isNil, shallowArrayCopy, type Nil } from "../util/utils";
 import ArraysAt from "./at";
 import type {
   ArrayForEach,
@@ -8,6 +8,7 @@ import type {
   ArraysType,
   ArraysWhenType,
   ArrayThen,
+  Consumer,
   IndexType,
   KeyCallbackType,
   Predicate,
@@ -16,6 +17,10 @@ import { distinctBy, resizeTo, thenCallback } from "./util";
 import { ArraysWhen } from "./when";
 
 export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
+  if (!isNil(input) && !isArray(input)) {
+    throw new Error("Element is not an array");
+  }
+
   const length = isNil(input) ? -1 : input.length;
 
   return {
@@ -53,6 +58,17 @@ export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
       const array = !isNil(input) ? input : [];
       array.push(item);
       return Arrays(array);
+    },
+    pop(consumer?: Consumer<T | undefined>): ArraysType<T> {
+      return this.then((array) => {
+        const item = array.pop();
+
+        if (!isNil(consumer)) {
+          consumer(item);
+        }
+
+        return array;
+      });
     },
     some(predicate: Predicate<T>): boolean {
       return !isNil(input) && input.some(predicate);

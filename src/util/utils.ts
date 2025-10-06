@@ -1,5 +1,6 @@
 export type Nil = null | undefined;
 export type OrNil<T> = T | Nil;
+export type Then<T, V> = (input: T) => V | Nil;
 
 export function isNil(value: any): value is Nil {
   return value === null || value === undefined;

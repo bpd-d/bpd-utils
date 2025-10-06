@@ -4,6 +4,7 @@ export type Predicate<T> = (value: T) => boolean;
 export type Function<T, V> = (value: T) => V;
 export type FunctionIdentity<T> = (value: T) => T;
 export type FunctionVoid<T, V> = (value: T) => V | undefined;
+export type Consumer<T> = (value: T) => void;
 
 export type IndexType = number | "first" | "last";
 export type KeyCallbackType<T, V> = keyof T | Nil | Function<T, V>;
@@ -27,6 +28,7 @@ export type ArraysType<T> = {
   forEach(callback: ArrayForEach<T>): ArraysType<T>;
   sort(callback?: ArraySort<T>): ArraysType<T>;
   push(item: T): ArraysType<T>;
+  pop(consumer?: Consumer<T | undefined>): ArraysType<T>;
   some(predicate: Predicate<T>): boolean;
   find(predicate: Predicate<T>): T | undefined;
   orElse(defaultValue: T[]): T[];
