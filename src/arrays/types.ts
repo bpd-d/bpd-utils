@@ -1,4 +1,4 @@
-import type { Nil } from "../util/utils";
+import type { Nil } from "../lib/utils";
 
 export type Predicate<T> = (value: T) => boolean;
 export type Function<T, V> = (value: T) => V;

@@ -1,4 +1,4 @@
-import { isNil, type OrNil } from "../util/utils";
+import { isNil, type OrNil } from "../lib/utils";
 import Arrays from "./arrays";
 import type { ArraysWhenType, Function, Predicate } from "./types";
 import {

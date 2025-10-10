@@ -1,23 +1,37 @@
-import { isNil, type Nil, type Then } from "../util/utils";
-import type { PlainObject, TObjects } from "./types";
+import { deepClone, DeepCloneStrategy } from "../lib/clone";
+import { isNil, type Nil, type Then } from "../lib/utils";
+import type { ObjectEnumerate, PlainObject, TObjects } from "./types";
+import { enumerateObject } from "./utils";
 
 export default function Objects<T extends PlainObject>(
   input: Nil | T
 ): TObjects<T> {
   return {
-    then<V extends PlainObject>(thenCallback: Then<T, V>): TObjects<T | V> {
+    then<V extends PlainObject>(thenCallback: Then<T, V>): TObjects<V> {
       if (isNil(input)) {
         // To review
-        return Objects(input) as TObjects<T | V>;
+        return Objects(input) as TObjects<V>;
       }
 
       return Objects(thenCallback(input));
     },
+    forEach(callback: ObjectEnumerate<T, void>): TObjects<T> {
+      return this.then((obj) => {
+        enumerateObject(obj, callback);
+        return obj;
+      });
+    },
     copy(): TObjects<T> {
       return this.then((obj) => ({ ...obj }));
     },
-    clone(): TObjects<T> {
-      return this.then((obj) => JSON.parse(JSON.stringify(obj)) as T);
+    clone(deep?: boolean, deepCloneStrategy?: DeepCloneStrategy): TObjects<T> {
+      return this.then((obj) => {
+        if (deep === true) {
+          return deepClone(obj, { strategy: deepCloneStrategy }) as T;
+        }
+
+        return { ...obj } as T;
+      });
     },
     toMap(): Map<string, any> {
       if (isNil(input)) {
@@ -42,6 +56,9 @@ export default function Objects<T extends PlainObject>(
     },
     get value() {
       return input;
+    },
+    get length(): number {
+      return this.keys.length;
     },
   };
 }

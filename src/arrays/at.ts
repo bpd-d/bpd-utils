@@ -1,4 +1,4 @@
-import { isArray, type OrNil } from "../util/utils";
+import { isArray, type OrNil } from "../lib/utils";
 import Arrays from "./arrays";
 import type { ArraysAtType, Function, IndexType } from "./types";
 

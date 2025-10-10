@@ -1,4 +1,4 @@
-import { isArray, isNil, shallowArrayCopy, type Nil } from "../util/utils";
+import { isArray, isNil, shallowArrayCopy, type Nil } from "../lib/utils";
 import ArraysAt from "./at";
 import type {
   ArrayForEach,
