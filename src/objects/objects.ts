@@ -1,11 +1,15 @@
 import { deepClone, DeepCloneStrategy } from "../lib/clone";
 import { isNil, type Nil, type Then } from "../lib/utils";
 import type { ObjectEnumerate, PlainObject, Objects } from "./types";
-import { enumerateObject, thenObject } from "./utils";
+import { enumerateObject, isPlainObject, thenObject } from "./utils";
 
 export default function Objects<T extends PlainObject>(
   input: Nil | T
 ): Objects<T> {
+  if (!isNil(input) && !isPlainObject(input)) {
+    throw new TypeError("Input must be a plain object");
+  }
+
   return {
     then<V extends PlainObject>(thenCallback: Then<T, V>): Objects<V> {
       return Objects(thenObject(input, thenCallback));

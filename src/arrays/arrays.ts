@@ -5,18 +5,19 @@ import type {
   ArrayMap,
   ArraysAtType,
   ArraySort,
-  ArraysType,
+  Arrays,
   ArraysWhenType,
   ArrayThen,
   Consumer,
   IndexType,
   KeyCallbackType,
   Predicate,
+  ArrayReduce,
 } from "./types";
 import { distinctBy, resizeTo, thenCallback } from "./util";
 import { ArraysWhen } from "./when";
 
-export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
+export default function Arrays<T>(input: T[] | Nil): Arrays<T> {
   if (!isNil(input) && !isArray(input)) {
     throw new Error("Element is not an array");
   }
@@ -24,13 +25,13 @@ export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
   const length = isNil(input) ? -1 : input.length;
 
   return {
-    then<V>(callback: ArrayThen<T, V>): ArraysType<T | V> {
+    then<V>(callback: ArrayThen<T, V>): Arrays<T | V> {
       return thenCallback(input, callback);
     },
-    map<V>(callback: ArrayMap<T, V>): ArraysType<T | V> {
+    map<V>(callback: ArrayMap<T, V>): Arrays<T | V> {
       return this.then((array) => array.map(callback));
     },
-    copy(): ArraysType<T | Nil> {
+    copy(): Arrays<T | Nil> {
       return this.then(shallowArrayCopy);
     },
     when: (predicate: Predicate<T>): ArraysWhenType<T> => {
@@ -39,27 +40,27 @@ export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
     at(index: IndexType): ArraysAtType<T> {
       return ArraysAt(input, index);
     },
-    distinct<V>(extractor?: KeyCallbackType<T, V> | undefined): ArraysType<T> {
+    distinct<V>(extractor?: KeyCallbackType<T, V> | undefined): Arrays<T> {
       return this.then((array) => distinctBy<T, V>(array, extractor));
     },
-    resize(size: number, defaultValue?: T): ArraysType<T | undefined> {
+    resize(size: number, defaultValue?: T): Arrays<T | undefined> {
       return Arrays(resizeTo(input, size, defaultValue));
     },
-    sort(callback?: ArraySort<T>): ArraysType<T> {
+    sort(callback?: ArraySort<T>): Arrays<T> {
       return this.then((array) => array.sort(callback));
     },
-    forEach(callback: ArrayForEach<T>): ArraysType<T> {
+    forEach(callback: ArrayForEach<T>): Arrays<T> {
       return this.then((array) => {
         array.forEach(callback);
         return array;
       });
     },
-    push(item: T): ArraysType<T> {
+    push(item: T): Arrays<T> {
       const array = !isNil(input) ? input : [];
       array.push(item);
       return Arrays(array);
     },
-    pop(consumer?: Consumer<T | undefined>): ArraysType<T> {
+    pop(consumer?: Consumer<T | undefined>): Arrays<T> {
       return this.then((array) => {
         const item = array.pop();
 
@@ -69,6 +70,18 @@ export default function Arrays<T>(input: T[] | Nil): ArraysType<T> {
 
         return array;
       });
+    },
+    reduce<V>(callback: ArrayReduce<T, V>, initialValue: V): Arrays<V> | V {
+      if (isNil(input) || input.length === 0) {
+        return isArray(initialValue) ? Arrays(initialValue) : initialValue;
+      }
+
+      const result = input.reduce((acc, item, index, array) => {
+        const res = callback(acc, item, index, array);
+        return isNil(res) ? acc : res;
+      }, initialValue);
+
+      return isArray(result) ? Arrays(result) : result;
     },
     some(predicate: Predicate<T>): boolean {
       return !isNil(input) && input.some(predicate);

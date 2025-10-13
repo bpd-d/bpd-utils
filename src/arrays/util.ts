@@ -1,7 +1,7 @@
 import { isNil, type OrNil } from "../lib/utils";
 import Arrays from "./arrays";
 import type {
-  ArraysType,
+  Arrays,
   ArrayThen,
   Function,
   KeyCallbackType,
@@ -11,7 +11,7 @@ import type {
 export function thenCallback<T, V>(
   input: OrNil<T[]>,
   callback: ArrayThen<T, V>
-): ArraysType<T | V> {
+): Arrays<T | V> {
   if (isNil(input)) {
     return Arrays(input);
   }
