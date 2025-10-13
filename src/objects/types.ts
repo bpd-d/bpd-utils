@@ -1,3 +1,4 @@
+import type { DeepCloneStrategy } from "../lib/clone";
 import type { Nil, Then } from "../lib/utils";
 
 export type PlainObject = Record<string, any>;
@@ -10,17 +11,20 @@ export type ObjectEnumerate<T, V> = (
   index: number
 ) => V;
 
-export type TObjects<T extends PlainObject> = {
+export type Objects<T extends PlainObject> = {
   orElse(value: T): T;
-  then<V extends PlainObject>(thenable: Then<T, V>): TObjects<V>;
-  forEach(callback: ObjectEnumerate<T, void>): TObjects<T>;
-  copy(): TObjects<T>;
-  clone(deepClone?: boolean): TObjects<T>;
+  then<V extends PlainObject>(thenable: Then<T, V>): Objects<V>;
+  forEach(callback: ObjectEnumerate<T, void>): Objects<T>;
+  filter<V extends PlainObject>(
+    callback: ObjectEnumerate<T, boolean>
+  ): Objects<V>;
+  copy(): Objects<T>;
+  clone(strategy?: DeepCloneStrategy): Objects<T>;
   toMap(): Map<string, any>;
   length: number;
   isNil: boolean;
   isEmpty: boolean;
   value: T | Nil;
   keys: string[];
-  values: any[];
+  values: Values<T>[];
 };

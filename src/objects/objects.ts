@@ -1,36 +1,39 @@
 import { deepClone, DeepCloneStrategy } from "../lib/clone";
 import { isNil, type Nil, type Then } from "../lib/utils";
-import type { ObjectEnumerate, PlainObject, TObjects } from "./types";
-import { enumerateObject } from "./utils";
+import type { ObjectEnumerate, PlainObject, Objects } from "./types";
+import { enumerateObject, thenObject } from "./utils";
 
 export default function Objects<T extends PlainObject>(
   input: Nil | T
-): TObjects<T> {
+): Objects<T> {
   return {
-    then<V extends PlainObject>(thenCallback: Then<T, V>): TObjects<V> {
-      if (isNil(input)) {
-        // To review
-        return Objects(input) as TObjects<V>;
-      }
-
-      return Objects(thenCallback(input));
+    then<V extends PlainObject>(thenCallback: Then<T, V>): Objects<V> {
+      return Objects(thenObject(input, thenCallback));
     },
-    forEach(callback: ObjectEnumerate<T, void>): TObjects<T> {
+    forEach(callback: ObjectEnumerate<T, void>): Objects<T> {
       return this.then((obj) => {
         enumerateObject(obj, callback);
         return obj;
       });
     },
-    copy(): TObjects<T> {
+    filter<V extends PlainObject>(
+      callback: ObjectEnumerate<T, boolean>
+    ): Objects<V> {
+      return this.then((obj) => {
+        return Object.entries(obj).reduce((acc, [key, value], index) => {
+          if (callback(key as keyof T, value as T[keyof T], obj, index)) {
+            acc[key as keyof V] = value as unknown as V[keyof V];
+          }
+          return acc;
+        }, {} as V);
+      });
+    },
+    copy(): Objects<T> {
       return this.then((obj) => ({ ...obj }));
     },
-    clone(deep?: boolean, deepCloneStrategy?: DeepCloneStrategy): TObjects<T> {
+    clone(strategy?: DeepCloneStrategy): Objects<T> {
       return this.then((obj) => {
-        if (deep === true) {
-          return deepClone(obj, { strategy: deepCloneStrategy }) as T;
-        }
-
-        return { ...obj } as T;
+        return deepClone(obj, { strategy }) as T;
       });
     },
     toMap(): Map<string, any> {
@@ -51,7 +54,7 @@ export default function Objects<T extends PlainObject>(
     get keys(): string[] {
       return isNil(input) ? [] : Object.keys(input);
     },
-    get values(): any[] {
+    get values() {
       return isNil(input) ? [] : Object.values(input);
     },
     get value() {
