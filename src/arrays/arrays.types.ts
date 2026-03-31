@@ -64,3 +64,11 @@ export type ArraysAtType<T> = {
   orElse(defaultValue: T): T;
   value: T | undefined;
 };
+
+export type AsyncArrays<T> = {
+  values: Promise<T[] | Nil>;
+  length: Promise<number>;
+  isEmpty: Promise<boolean>;
+  then<V>(callback: ArrayThen<T, V>): AsyncArrays<T | V>;
+  map<V>(callback: ArrayMap<T, V>): AsyncArrays<T | V>;
+};

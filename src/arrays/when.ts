@@ -1,17 +1,17 @@
 import { isNil, type OrNil } from "../lib/utils";
 import Arrays from "./arrays";
-import type { ArraysWhenType, Function, Predicate } from "./types";
+import type { ArraysWhenType, Function, Predicate } from "./arrays.types";
 import {
   deleteFromArray,
   filterArray,
   mapArray,
   mapIfMatch,
   thenCallback,
-} from "./util";
+} from "./arrays.utils";
 
 export function ArraysWhen<T>(
   input: OrNil<T[]>,
-  whenCallback: Predicate<T>
+  whenCallback: Predicate<T>,
 ): ArraysWhenType<T> {
   return {
     filter() {
@@ -19,7 +19,7 @@ export function ArraysWhen<T>(
     },
     delete() {
       return thenCallback(input, (array) =>
-        deleteFromArray(array, whenCallback)
+        deleteFromArray(array, whenCallback),
       );
     },
     then(mapper: Function<T, T>) {
@@ -28,7 +28,7 @@ export function ArraysWhen<T>(
       }
 
       const newArray = mapArray(input, (item) =>
-        mapIfMatch(item, whenCallback, mapper)
+        mapIfMatch(item, whenCallback, mapper),
       );
 
       return ArraysWhen(newArray, whenCallback);
