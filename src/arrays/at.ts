@@ -1,6 +1,6 @@
 import { isArray, type OrNil } from "../lib/utils";
 import Arrays from "./arrays";
-import type { ArraysAtType, Function, IndexType } from "./types";
+import type { ArraysAtType, Function, IndexType } from "./arrays.types";
 
 function resolveIndex(index: IndexType, length: number): number {
   if (length < 0) {
@@ -23,7 +23,7 @@ function resolveIndex(index: IndexType, length: number): number {
 
 export default function ArraysAt<T>(
   array: OrNil<T[]>,
-  index: IndexType
+  index: IndexType,
 ): ArraysAtType<T> {
   const length = array?.length ?? -1;
   const resolvedIndex = resolveIndex(index, length);

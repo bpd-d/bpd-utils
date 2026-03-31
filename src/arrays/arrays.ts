@@ -13,8 +13,8 @@ import type {
   KeyCallbackType,
   Predicate,
   ArrayReduce,
-} from "./types";
-import { distinctBy, resizeTo, thenCallback } from "./util";
+} from "./arrays.types";
+import { distinctBy, resizeTo, thenCallback } from "./arrays.utils";
 import { ArraysWhen } from "./when";
 
 export default function Arrays<T>(input: T[] | Nil): Arrays<T> {

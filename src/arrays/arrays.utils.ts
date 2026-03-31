@@ -6,11 +6,11 @@ import type {
   Function,
   KeyCallbackType,
   Predicate,
-} from "./types";
+} from "./arrays.types";
 
 export function thenCallback<T, V>(
   input: OrNil<T[]>,
-  callback: ArrayThen<T, V>
+  callback: ArrayThen<T, V>,
 ): Arrays<T | V> {
   if (isNil(input)) {
     return Arrays(input);
@@ -36,7 +36,7 @@ export function mapArray<T, V>(array: T[], callback: (item: T) => V): V[] {
 export function mapIfMatch<T, V>(
   item: T,
   predicate: Predicate<T>,
-  mapper: Function<T, V>
+  mapper: Function<T, V>,
 ): T | V {
   if (predicate(item)) {
     const mapped = mapper(item);
@@ -47,7 +47,7 @@ export function mapIfMatch<T, V>(
 }
 
 export function keyExtractorStrategy<T, V>(
-  value: KeyCallbackType<T, V>
+  value: KeyCallbackType<T, V>,
 ): Function<T, V> {
   if (isNil(value)) {
     return (v: T) => v as any as V;
@@ -66,7 +66,7 @@ export function keyExtractorStrategy<T, V>(
 
 export function distinctBy<T, V>(
   array: T[],
-  extractor: KeyCallbackType<T, V>
+  extractor: KeyCallbackType<T, V>,
 ): T[] {
   const keySet = new Set<V>();
   const keyExtractor = keyExtractorStrategy<T, V>(extractor);
@@ -83,7 +83,7 @@ export function distinctBy<T, V>(
 export function resizeTo<T>(
   array: OrNil<T[]>,
   size: number,
-  defaultValue: T
+  defaultValue: T,
 ): T[] {
   if (size <= 0) {
     return [];
